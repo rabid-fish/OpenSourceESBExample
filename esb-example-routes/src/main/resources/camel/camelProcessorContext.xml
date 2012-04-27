@@ -10,55 +10,86 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 ">
 
-	<context:component-scan base-package="com.github.rabid_fish.processor" />
+	<beans profile="live">
+		<!-- Configure the Camel endpoints to use JMS for communication -->
+		<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<property name="location">
+				<value>classpath:/properties/camel.properties</value>
+			</property>
+		</bean>
 
-	<cxf:cxfEndpoint 
-		id="mathOperationWebServiceClient" 
-		address="${mathOperation.uri}" 
-		serviceClass="https.github_com.rabid_fish.MathOperationPortType">
-		
-        <cxf:properties>
-            <entry key="dataFormat" value="PAYLOAD"/>
-        </cxf:properties>
-	</cxf:cxfEndpoint>
-
-	<camel:errorHandler 
-		id="deadLetterErrorHandler" 
-		type="DeadLetterChannel"
-		deadLetterUri="${errorEndpoint}" 
-		useOriginalMessage="true"
-	>
-		<camel:redeliveryPolicy maximumRedeliveries="2"
-			redeliveryDelay="1000" logHandled="true" />
-	</camel:errorHandler>
+		<!-- Configure the Camel JMS component to connect to a local JMS service -->
+		<import resource="classpath:/camel/activeMqContext.xml"/>
+	</beans>
 	
-	<camelContext xmlns="http://camel.apache.org/schema/spring" id="mathOperationProcessorCamelContext">
+	<beans profile="test">
+		<!-- Configure the Camel endpoints to use the current VM for communication -->
+		<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<property name="location">
+				<value>classpath:/properties/camelTest.properties</value>
+			</property>
+		</bean>
+	</beans>
+	
+	<beans>
+		<cxf:cxfEndpoint 
+			id="mathOperationWebServiceClient" 
+			address="${webservice.uri}" 
+			serviceClass="https.github_com.rabid_fish.MathOperationPortType">
+			
+	        <cxf:properties>
+	            <entry key="dataFormat" value="PAYLOAD"/>
+	        </cxf:properties>
+		</cxf:cxfEndpoint>
 
-		<camel:endpoint id="dlqEndpoint" uri="${dlqEndpoint}" />
-		<camel:endpoint id="errorEndpoint" uri="${errorEndpoint}" />
+		<camel:errorHandler 
+			id="deadLetterErrorHandler" 
+			type="DeadLetterChannel"
+			deadLetterUri="${errorEndpoint}" 
+			useOriginalMessage="true"
+		>
+			<camel:redeliveryPolicy maximumRedeliveries="2"
+				redeliveryDelay="1000" logHandled="true" />
+		</camel:errorHandler>
 
-		<camel:endpoint id="mathOperationInputQueueEndpoint" uri="${mathOperationInputQueueEndpoint}" />
-		<camel:endpoint id="mathOperationWebServiceEndpoint" uri="${mathOperationWebServiceEndpoint}" />
-		<camel:endpoint id="mathOperationTransformEndpoint" uri="${mathOperationTransformEndpoint}" />
-		<camel:endpoint id="mathOperationOutputTopicEndpoint" uri="${mathOperationOutputTopicEndpoint}" />
+		<bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
+			<property name="traceExceptions" value="true"/>
+			<property name="traceInterceptors" value="true"/>
+			<property name="traceOutExchanges" value="true" />
+			<property name="logLevel" value="DEBUG" />
+		</bean>
 
-        <dataFormats>
-            <jaxb id="mathOperationJaxb" contextPath="com.github.rabid_fish" prettyPrint="true" ignoreJAXBElement="false" />
-        </dataFormats>
+		<bean id="processor" class="com.github.rabid_fish.Processor" />
 
-		<route id="mathOperationProcessorRoute">
-			<camel:from ref="mathOperationInputQueueEndpoint" />
-			<camel:to ref="mathOperationWebServiceEndpoint" />
-			<camel:to ref="mathOperationTransformEndpoint" />
-			<camel:to ref="mathOperationOutputTopicEndpoint" />
-		</route>
-		
-		<route id="mathOperationError">
-            <camel:from ref="errorEndpoint" />
-            <camel:bean ref="stdErrorBuilder" method="buildErrorMessage" />
-			<camel:to ref="dlqEndpoint" />
-		</route>
-		
-	</camelContext>
+		<camelContext xmlns="http://camel.apache.org/schema/spring" id="mathOperationProcessorCamelContext" trace="true">
 
+			<camel:endpoint id="dlqEndpoint" uri="${dlqEndpoint}" />
+			<camel:endpoint id="errorEndpoint" uri="${errorEndpoint}" />
+	
+			<camel:endpoint id="mathOperationInitiatorConsumerEndpoint" uri="${mathOperationInitiatorConsumerEndpoint}" />
+			<camel:endpoint id="mathOperationWebServiceRequestBeanEndpoint" uri="${mathOperationWebServiceRequestBeanEndpoint}" />
+			<camel:endpoint id="mathOperationWebServiceEndpoint" uri="${mathOperationWebServiceEndpoint}" />
+			<camel:endpoint id="mathOperationWebServiceResponseBeanEndpoint" uri="${mathOperationWebServiceResponseBeanEndpoint}" />
+			<camel:endpoint id="mathOperationSubscriberProducerEndpoint" uri="${mathOperationSubscriberProducerEndpoint}" />
+	
+	        <dataFormats>
+	            <jaxb id="mathOperationJaxb" contextPath="com.github.rabid_fish" prettyPrint="true" ignoreJAXBElement="false" />
+	        </dataFormats>
+	
+			<route id="mathOperationProcessorRoute">
+				<camel:from ref="mathOperationInitiatorConsumerEndpoint" />
+				<camel:to ref="mathOperationWebServiceRequestBeanEndpoint" />
+				<camel:to ref="mathOperationWebServiceEndpoint" />
+				<camel:to ref="mathOperationWebServiceResponseBeanEndpoint" />
+				<camel:to ref="mathOperationSubscriberProducerEndpoint" />
+			</route>
+			
+			<route id="mathOperationError">
+	            <camel:from ref="errorEndpoint" />
+				<camel:to ref="dlqEndpoint" />
+			</route>
+			
+		</camelContext>
+	</beans>
+	
 </beans>

@@ -10,18 +10,41 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 ">
 
-	<context:component-scan base-package="com.github.rabid_fish.subscriber" />
+	<beans profile="live">
+		<!-- Configure the Camel endpoints to use JMS for communication -->
+		<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<property name="location">
+				<value>classpath:/properties/camel.properties</value>
+			</property>
+		</bean>
 
-	<camelContext xmlns="http://camel.apache.org/schema/spring" id="mathOperationSubscriberCamelContext">
+		<!-- Configure the Camel JMS component to connect to a local JMS service -->
+		<import resource="classpath:/camel/activeMqContext.xml"/>
+	</beans>
+	
+	<beans profile="test">
+		<!-- Configure the Camel endpoints to use the current VM for communication -->
+		<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<property name="location">
+				<value>classpath:/properties/camelTest.properties</value>
+			</property>
+		</bean>
+	</beans>
+	
+	<beans>
+		<bean id="subscriber" class="com.github.rabid_fish.Subscriber"/>
 
-		<camel:endpoint id="mathOperationOutputTopicEndpoint" uri="${mathOperationOutputTopicEndpoint}" />
-		<camel:endpoint id="mathOperationOutputLogEndpoint" uri="${mathOperationOutputLogEndpoint}" />
+		<camelContext xmlns="http://camel.apache.org/schema/spring" id="mathOperationSubscriberCamelContext">
 
-		<route id="mathOperationSubscriberRoute">
-			<camel:from ref="mathOperationOutputTopicEndpoint" />
-			<camel:to ref="mathOperationOutputLogEndpoint" />
-		</route>
+			<camel:endpoint id="mathOperationSubscriberConsumerEndpoint" uri="${mathOperationSubscriberConsumerEndpoint}" />
+			<camel:endpoint id="mathOperationSubscriberBeanEndpoint" uri="${mathOperationSubscriberBeanEndpoint}" />
 
-	</camelContext>
+			<route id="mathOperationSubscriberRoute">
+				<camel:from ref="mathOperationSubscriberConsumerEndpoint" />
+				<camel:to uri="mathOperationSubscriberBeanEndpoint" />
+			</route>
 
+		</camelContext>
+	</beans>
+	
 </beans>

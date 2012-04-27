@@ -5,23 +5,47 @@
 	xmlns:camel="http://camel.apache.org/schema/spring"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
 ">
 
-	<context:component-scan base-package="com.github.rabid_fish.initiator" />
+	<beans profile="live">
+		<!-- Configure the Camel endpoints to use JMS for communication -->
+		<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<property name="location">
+				<value>classpath:/properties/camel.properties</value>
+			</property>
+		</bean>
+
+		<!-- Configure the Camel JMS component to connect to a local JMS service -->
+		<import resource="classpath:/camel/activeMqContext.xml"/>
+	</beans>
 	
-	<camelContext xmlns="http://camel.apache.org/schema/spring" id="mathOperationInitiatorCamelContext">
-
-		<camel:endpoint id="mathOperationInputDirectEndpoint" uri="${mathOperationInputDirectEndpoint}" />
-		<camel:endpoint id="mathOperationInputQueueEndpoint" uri="${mathOperationInputQueueEndpoint}" />
-
-		<route id="mathOperationInputRoute">
-			<camel:from ref="mathOperationInputDirectEndpoint" />
-			<camel:to ref="mathOperationInputQueueEndpoint" />
-		</route>
-
-	</camelContext>
-
+	<beans profile="test">
+		<!-- Configure the Camel endpoints to use the current VM for communication -->
+		<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<property name="location">
+				<value>classpath:/properties/camelTest.properties</value>
+			</property>
+		</bean>
+	</beans>
+	
+	<beans>
+		<bean class="com.github.rabid_fish.Initiator" />
+	
+		<camelContext xmlns="http://camel.apache.org/schema/spring"
+			id="mathOperationInitiatorCamelContext">
+	
+			<camel:endpoint	id="mathOperationInitiatorProducerEndpoint"
+				uri="${mathOperationInitiatorProducerEndpoint}" />
+	
+			<route id="mathOperationInputRoute">
+				<camel:from uri="direct:start" />
+				<camel:to ref="mathOperationInitiatorProducerEndpoint" />
+			</route>
+	
+		</camelContext>
+	</beans>
+	
 </beans>
