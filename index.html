@@ -1,1 +1,153 @@
-"Test Page" 
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <title>CIJUG Presentation on Open Source ESB</title>
+    
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+    <link href="presentation.css" rel="stylesheet" />
+</head>
+
+<body class="impress-not-supported">
+
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+</div>
+
+<div id="impress">
+
+	<!--
+		Notes:
+        * `data-x`, `data-y`, `data-z` -- they define the position of **the center** of step element on
+            the canvas in pixels; their default value is 0;
+        * `data-rotate-x`, `data-rotate-y`, 'data-rotate-z`, `data-rotate` -- they define the rotation of
+            the element around given axis in degrees; their default value is 0; `data-rotate` and `data-rotate-z`
+            are exactly the same;
+        * `data-scale` -- defines the scale of step element; default value is 1
+
+		  if you want something to be in front or behind another slide, use data-z
+		  you can also data-rotate x, y, and z axis for nifty 3-d effects
+		  data-scale causes the slide and its text to be much larger
+		  animation within a slide is done via css animation, with the element
+		    moving from a "future" class to a "present" class.  for example:
+			"#ing.present .positioning" css on element <b class="positioning">positioning</b>
+		-->
+
+    <div class="step slide" data-x="0" data-y="-1000" data-z="0" data-rotate="0">
+		<h1>ESB Presentation</h1>
+		<p>
+			<span class="title">Author</span>
+			Dan Juliano (<a href="http://www.linkedin.com/pub/dan-juliano/1/865/2a3">Linked In</a>)
+		</p>
+		<p>
+			<span class="title">Code Samples</span>
+			<a href="https://github.com/rabid-fish/OpenSourceESBExample">OpenSourceESBExample</a> on Github
+		</p>
+		<p>
+			<span class="title">Place of Employment</span>
+			<a href="http://www.fhlbdm.com/">Federal Home Loan Bank of Des Moines</a>
+			<q>FHLB Des Moines provides readily available, low-cost liquidity to local lenders in all economic cycles.</q>
+		</p>
+	</div>
+
+    <div class="step slide" data-x="1000" data-y="-1000" data-z="0" data-rotate="0">
+		<h1>Slide Format</h1>
+		<img class="image1" src="images/Jeopardy.png" alt="Jeopardy" />
+	</div>
+
+<!--
+	Setup for example:
+	1) Run ActiveMQ on localhost
+	2) Run Tomcat on localhost, deploy esb-example-webservice to it
+	3) Run the Initiator, Processor, and Subscriber from the command line (handy batch script)
+-->
+	
+    <div class="step slide" data-x="0" data-y="0" data-z="0" data-rotate="0">
+		<h1>What is ESB?</h1>
+		<ul>
+			<li>Developer Tool for application integration</li>
+			<li>Plumbing library</li>
+			<li>Messaging Platform</li>
+		</ul>
+    </div>
+
+    <div class="step slide" data-x="1000" data-y="0" data-z="0" data-rotate="0">
+		<h1>What is Messaging?</h1>
+		<ul>
+			<li>"Real Time" capability of exchanging data between systems</li>
+			<li>A means of decoupling systems</li>
+		</ul>
+    </div>
+
+    <div class="step slide" data-x="2000" data-y="0" data-z="0" data-rotate="0">
+		<h1>What are Types of Integration?</h1>
+		<img class="image1" src="images/Types%20of%20Integration.png" alt="Types of Integration" />
+    </div>
+
+    <div class="step slide" data-x="0" data-y="1000" data-z="0" data-rotate="0">
+		<h1>What makes up an ESB?</h1>
+		<img class="image2" src="images/Apache%20ESB%20Tools.png" alt="Apache ESB Tools" />
+    </div>
+
+    <div class="step slide" data-x="1000" data-y="1000" data-z="0" data-rotate="0">
+		<h1>What is Camel? (pt1)</h1>
+		<img class="image1" src="images/EIP%20Book.png" alt="EIP Book" />
+    </div>
+
+    <div class="step slide" data-x="2000" data-y="1000" data-z="0" data-rotate="0">
+		<h1>What is Camel? (pt2)</h1>
+		<ul>
+			<li>It is a plumbing library used by software developers to build routes between systems</li>
+			<li>Orchestrates data flow between the messaging platform and applications</li>
+		</ul>
+    </div>
+
+    <div class="step slide" data-x="3000" data-y="1000" data-z="0" data-rotate="0">
+		<h1>What is ServiceMix?</h1>
+		<ul>
+			<li>Application Server which runs Camel routes (and more)</li>
+			<li>OSGi container</li>
+		</ul>
+    </div>
+
+    <div class="step slide" data-x="4000" data-y="1000" data-z="0" data-rotate="0">
+		<h1>What is ActiveMQ?</h1>
+		<ul>
+			<li>Durable, Asynchronous, Auditable, Real-Time messaging</li>
+			<li>Persistent storage of messages to disk</li>
+		</ul>
+    </div>
+
+    <div class="step slide" data-x="0" data-y="2000" data-z="0" data-rotate="0">
+		<h1>Messaging Types?</h1>
+		<div class="imagewrap"><img class="image2" src="images/Messaging%20Types.png" alt="Messaging Types" /></div>
+    </div>
+
+    <div class="step slide" data-x="1000" data-y="2000" data-z="0" data-rotate="0">
+		<h1>ESB Benefits?</h1>
+		<img class="image1" src="images/ESB%20Benefits.png" alt="ESB Benefits" />
+    </div>
+
+    <div id="overview" class="step" data-x="2000" data-y="600" data-scale="6">
+    </div>
+
+</div>
+
+<div class="hint">
+    <p>Use a spacebar or arrow keys to navigate</p>
+</div>
+<script>
+if ("ontouchstart" in document.documentElement) { 
+    document.querySelector(".hint").innerHTML = "<p>Tap on the left or right to navigate</p>";
+}
+</script>
+<script src="impress.js"></script>
+<script>impress().init();</script>
+
+</body>
+</html>
