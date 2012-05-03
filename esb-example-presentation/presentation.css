@@ -35,15 +35,6 @@ body {
 ol, ul {
     list-style: none;
 }
-blockquote, q {
-    quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-    content: '';
-    content: none;
-}
-
 table {
     border-collapse: collapse;
     border-spacing: 0;
@@ -74,24 +65,6 @@ body {
 */
 b, strong { font-weight: bold }
 i, em { font-style: italic }
-
-/*
-    ... and give links a nice look.
-*/
-a {
-    color: inherit;
-    text-decoration: none;
-    padding: 0 0.1em;
-    background: rgba(255,255,255,0.5);
-    text-shadow: -1px -1px 2px rgba(100,100,100,0.9);
-    border-radius: 0.2em;
-    
-    -webkit-transition: 0.5s;
-    -moz-transition:    0.5s;
-    -ms-transition:     0.5s;
-    -o-transition:      0.5s;
-    transition:         0.5s;
-}
 
 a:hover,
 a:focus {
@@ -190,16 +163,54 @@ a:focus {
     letter-spacing: -1px;
 }
 
-.slide q {
-    display: block;
-    font-size: 50px;
-    line-height: 72px;
-
-    margin-top: 100px;
+.slide h1 {
+	color: #002EB8;
+	text-shadow: 2px 2px 2px #99B3FF;
+	font-size: 117%;
+	margin-bottom: 20px;
 }
 
-.slide q strong {
-    white-space: nowrap;
+.slide span {
+    display: block;
+	font-weight: bold;
+	margin-left: -10px;
+	margin-top: 30px;
+}
+
+.slide p {
+	margin-left: 20px;
+}
+
+.slide p q {
+	display: block;
+	margin: 10px;
+}
+
+.slide img.image1 {
+	height: 550px;
+	display: block;
+	margin: auto;
+}
+
+.slide img.image2 {
+	width: 700px;
+	display: block;
+	margin: auto;
+	margin-top: 100px;
+}
+
+.slide ul {
+    list-style-type: circle;
+	margin-left: 40px;
+	margin-top: 30px;
+}
+
+.slide li {
+	font-size: 200%;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	text-shadow: none;
+	line-height: 110%;
 }
 
 /*
@@ -291,37 +302,6 @@ a:focus {
 .impress-enabled .hint { display: block }
 
 /*
-    ... and we will show it when the first step (with id 'bored') is active.
-*/
-.impress-on-bored .hint {
-    /*
-        We remove the transparency and position the hint in its default fixed
-        position.
-    */
-    opacity: 1;
-    
-    -webkit-transform: translateY(0px);
-    -moz-transform:    translateY(0px);
-    -ms-transform:     translateY(0px);
-    -o-transform:      translateY(0px);
-    transform:         translateY(0px);
-    
-    /*
-        Now for fade in transition we have the oposite situation from the one
-        above.
-        
-        First after 4.5s delay we animate the transform property to move the hint
-        into its correct position and after that we fade it in with opacity 
-        transition.
-    */
-    -webkit-transition: opacity 1s 5s, -webkit-transform 0.5s 4.5s;
-    -moz-transition:    opacity 1s 5s,    -moz-transform 0.5s 4.5s;
-    -ms-transition:     opacity 1s 5s,     -ms-transform 0.5s 4.5s;
-    -o-transition:      opacity 1s 5s,      -o-transform 0.5s 4.5s;
-    transition:         opacity 1s 5s,         transform 0.5s 4.5s;
-}
-
-/*
     And as the last thing there is a workaround for quite strange bug.
     It happens a lot in Chrome. I don't remember if I've seen it in Firefox.
     
@@ -344,14 +324,3 @@ a:focus {
 */
 .impress-enabled          { pointer-events: none }
 .impress-enabled #impress { pointer-events: auto }
-
-/*
-    There is one funny thing I just realized.
-    
-    Thanks to this workaround above everything except #impress element is invisible
-    for click events. That means that the hint element is also not clickable.
-    So basically all of this transforms and delayed transitions trickery was probably
-    not needed at all...
-    
-    But it was fun to learn about it, wasn't it?
-*/
